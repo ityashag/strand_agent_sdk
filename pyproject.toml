@@ -1,0 +1,74 @@
+[project]
+name = "strand-agent-sdk-course"
+version = "0.1.0"
+description = "Learn the Strands Agents SDK from the first agent loop to a production deployment."
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    # The SDK itself. Extras add model providers, tracing and the web_fetch tool.
+    "strands-agents[otel,openai,anthropic,ollama,web-fetch]>=1.65,<2",
+    # Evaluations (lesson 18).
+    "strands-agents-evals>=1.11,<2",
+    # AgentCore Runtime wrapper (lesson 19 and the capstone).
+    "bedrock-agentcore>=1.27,<2",
+    # MCP server and client (lesson 04).
+    "mcp>=2.3,<3",
+    # Web service (lessons 06 and 19, capstone).
+    "fastapi>=0.115",
+    "uvicorn>=0.30",
+    # Typed settings read from environment variables.
+    "pydantic-settings>=2.6",
+    # This repo's own code: shared lesson helpers and the capstone agent (see [tool.uv.sources]).
+    "course-common",
+    "support-agent",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3",
+    "pytest-asyncio>=0.24",
+    "httpx>=0.27",
+    "ruff>=0.8",
+    "mypy>=1.13",
+]
+
+[tool.uv]
+# The root is not a package: it is a workspace of lessons (scripts) and tests.
+package = false
+
+[tool.uv.sources]
+# Local packages, installed as normal copies (not editable). Editable installs use a .pth
+# file, and Python 3.13 skips .pth files that macOS has flagged "hidden", which happens in
+# some synced folders. uv rebuilds these when their files change (see their cache-keys).
+course-common = { path = "course_common" }
+support-agent = { path = "capstone" }
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+addopts = "-q"
+asyncio_default_fixture_loop_scope = "function"
+markers = [
+    "live: calls a real model provider (skipped unless RUN_LIVE_TESTS=1)",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM"]
+# The formatter wraps code; long prompt strings and comments are fine in a teaching repo.
+ignore = ["E501"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["course_common", "support_agent"]
+
+[tool.ruff.lint.flake8-bugbear]
+# FastAPI's dependency-injection idiom: Depends()/Header() in argument defaults.
+extend-immutable-calls = ["fastapi.Depends", "fastapi.Header"]
+
+[tool.mypy]
+python_version = "3.13"
+ignore_missing_imports = true
+check_untyped_defs = true
