@@ -1,0 +1,19 @@
+[project]
+name = "course-common"
+version = "0.1.0"
+description = "Shared helpers for the Strands course: settings, model factory, offline ScriptedModel."
+requires-python = ">=3.13"
+dependencies = ["strands-agents>=1.65,<2", "pydantic-settings>=2.6"]
+
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+# The package's files live right here (course_common/*.py), so map the package to ".".
+[tool.setuptools]
+package-dir = { "course_common" = "." }
+packages = ["course_common"]
+
+# Installed as a normal (non-editable) package. Tell uv to rebuild it when any file changes.
+[tool.uv]
+cache-keys = [{ file = "pyproject.toml" }, { file = "*.py" }]

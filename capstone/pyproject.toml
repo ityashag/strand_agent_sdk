@@ -1,0 +1,25 @@
+[project]
+name = "support-agent"
+version = "0.1.0"
+description = "Capstone: a production customer-support agent built with the Strands Agents SDK."
+requires-python = ">=3.13"
+dependencies = [
+    "strands-agents[otel]>=1.65,<2",
+    "bedrock-agentcore>=1.27,<2",
+    "fastapi>=0.115",
+    "uvicorn>=0.30",
+    "pydantic-settings>=2.6",
+]
+
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["support_agent"]
+
+[tool.setuptools.package-data]
+support_agent = ["skills/*/SKILL.md"]
+
+[tool.uv]
+cache-keys = [{ file = "pyproject.toml" }, { file = "support_agent/**/*" }]
